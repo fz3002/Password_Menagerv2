@@ -52,7 +52,7 @@ std::vector<std::string> UI::getTimeStamp(const int &hours, const int &minutes, 
 
 
 void UI::chooseFile(){
-    if(OS == "Linux") std::filesystem::current_path(std::filesystem::current_path().parent_path().parent_path());
+    if(OS == "Linux") std::filesystem::current_path(std::filesystem::current_path().parent_path().parent_path()); //TODO: check file path on linux
     else std::filesystem::current_path(std::filesystem::current_path().parent_path());
     std::cout << "Would you like to [1] create a new file/use file outside directory or [2] open an existing file?" << std::endl;
     std::filesystem::create_directory("data");
@@ -160,7 +160,7 @@ void UI::menu(){
     }
 }
 
-void UI::addEntry(){ //TODO: Try to create function in UserInput namespace
+void UI::addEntry(){
     char commandLocal = ' ';
     std::string commandLocalLine;
     if(OS == "Windows") system("cls");
@@ -265,7 +265,7 @@ void UI::searchEntry(){
     }
 }
 
-void UI::sortEntries(){ //TODO: sorting entries
+void UI::sortEntries(){
     std::string sortParameter;
     std::vector<FileEntry> sortedEntries = data;
     while(stringToLowerCase(sortParameter) != "name" && stringToLowerCase(sortParameter) != "category") {
