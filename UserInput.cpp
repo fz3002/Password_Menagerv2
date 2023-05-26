@@ -27,6 +27,19 @@ std::string UserInput::filePath(){
             std::cout << "Please enter absolute path to the file: " << std::endl;
             ws(std::cin);
             getline(std::cin, filePath);
+            size_t pos = filePath.find_last_of("\\/");
+            std::string fileDir =  (std::string::npos == pos)
+                                   ? ""
+                                   : filePath.substr(0, pos);
+            while(stat(fileDir.c_str(), &sb) != 0) {
+                std::cout << "Incorect Path, Enter new one: " <<std::endl;
+                ws(std::cin);
+                getline(std::cin, filePath);
+                pos = filePath.find_last_of("\\/");
+                fileDir =  (std::string::npos == pos)
+                                       ? ""
+                                       : filePath.substr(0, pos);
+            }
         }else if(newOrExistingFile == '2') { //choose file from data directory
             char newFileCreation;
             std::string userInputNewFile;
@@ -41,7 +54,19 @@ std::string UserInput::filePath(){
                     std::cout << "Please enter absolute path to the file: " << std::endl;
                     ws(std::cin);
                     getline(std::cin, filePath);
-                    break;
+                    size_t pos = filePath.find_last_of("\\/");
+                    std::string fileDir =  (std::string::npos == pos)
+                                           ? ""
+                                           : filePath.substr(0, pos);
+                    while(stat(fileDir.c_str(), &sb) != 0) {
+                        std::cout << "Incorect Path, Enter new one: " <<std::endl;
+                        ws(std::cin);
+                        getline(std::cin, filePath);
+                        pos = filePath.find_last_of("\\/");
+                        fileDir =  (std::string::npos == pos)
+                                   ? ""
+                                   : filePath.substr(0, pos);
+                    }
                 }
                 while(std::cout << "Choose file number from the ones listed above: " && !(std::cin >> chooseDir)) { //choose from given files
                     std::cin.clear();
