@@ -5,11 +5,6 @@
 #include <vector>
 #include "FileEntry.hpp"
 
-/*
-1. write blocks of data into vector size of the password length
-2. swap by 2,1,3,7
-3. xor every character with character in password
-*/
 namespace EncryptDecrypt{
     /**
      * @brief splits string into vector of strings using given delimiter

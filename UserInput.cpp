@@ -46,9 +46,11 @@ std::string UserInput::filePath(){
             int chooseDir;
             while(true) {
                 int index=0;
+                std::cout<<"------------------------------------------------------------------------------------------------------------------------"<<std::endl;
                 for(const auto& dirEntry: std::filesystem::recursive_directory_iterator(std::filesystem::canonical("data"))) { // print out files in data directory
                     std::cout << ++index << ". " <<std::filesystem::canonical(dirEntry.path()) << std::endl;
                 }
+                std::cout<<"------------------------------------------------------------------------------------------------------------------------"<<std::endl;
                 if(index == 0) { //there are no file in data directory
                     std::cout << "No files in directory!" << std::endl;
                     std::cout << "Please enter absolute path to the file: " << std::endl;

@@ -7,25 +7,25 @@
     #define __OS "Linux"
 #endif
 
-auto main()->int{
-    if(OS == "Windows") system("cls");
-    else system("clear");
-    std::cout << "Welcome to the Pasword Manager!" << std::endl;
+auto main()->int {
     UI ui = UI();
+
+    UI::clearTerminal();
+
+    std::cout << "                                          Welcome to the Pasword Manager!!!\n" << std::endl;
     ui.chooseFile();
-    if(OS == "Windows") system("cls");
-    else system("clear");
+    UI::clearTerminal();
     ui.enterFile();
-    if(ui.getIncorectPassword()) return -1;
-    /*
-    if(__OS == "Windows") system("cls");
-    else system("clear");
-    */
+    if(ui.getIncorrectPassword()) {
+        return -1;
+    }
+    UI::clearTerminal();
+
     while(ui.getCommand() != 8){
         ui.dataPrint();
         ui.menu();
-        if(OS == "Windows") system("cls");
-        else system("clear");
+        UI::clearTerminal();
+
         switch(ui.getCommand()){
             case 1: ui.addEntry();
                     break;
@@ -44,7 +44,9 @@ auto main()->int{
             case 8: break;
             default: std::cout << "Invalid command!" << std::endl;
         }
+
         ui.writeToFile();
     }
+
     return 0;
 }

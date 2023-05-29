@@ -120,16 +120,9 @@ class UI{
      * @return true 
      * @return false 
      */
-    bool getIncorectPassword() const;
-    std::vector<std::string> getCategories();
+    bool getIncorrectPassword() const;
 
-/**
- * @brief check if password is already used in some entry
- *
- * @param password
- * @return true
- * @return false
- */
+    static void clearTerminal();
 };
 
 #endif

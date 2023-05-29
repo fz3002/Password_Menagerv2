@@ -7,7 +7,6 @@ std::string password::generatePassword(int length, bool upperCase, bool specialS
     std::string lowerCaseLetters = "qwertyuiopasdfghjklzxcvbnm";
     std::string specialCharacters = "!@#$%^&*()_-+=~`{[}]:<,>.?";
     std::default_random_engine defaultRandomEngine;
-
     std::string password;
     bool specialUsed = false, upperCaseUsed = false;
     std::uniform_int_distribution<int> intDisto(1, 3),
@@ -18,24 +17,24 @@ std::string password::generatePassword(int length, bool upperCase, bool specialS
                                         upperCaseDist (0,upperCaseLetters.length()),
                                         lowerCaseDist (0,lowerCaseLetters.length());
 
-    for(int i = 0; i < length; i++){
-        //randomize upperCase lowerCase or Special
+    for(int i = 0; i < length; i++) {                                                                                    //randomize upperCase lowerCase or Special
         int random = intDisto(defaultRandomEngine);
-        if (upperCase && !specialSymbols){
+
+        if (upperCase && !specialSymbols) {
             random = intSpecialDisto(defaultRandomEngine);
-        }else if (!upperCase && specialSymbols){
+        }else if (!upperCase && specialSymbols) {
             random = intSpecialDisto(defaultRandomEngine);
         }
-        else if (!upperCase && !specialSymbols){
+        else if (!upperCase && !specialSymbols) {
             random = 2;
         }
         //choosing upperCase letters or lowerCase or Special Chars
-        if (random == 1){
+        if (random == 1) {
             password += upperCaseLetters[upperCaseDist(defaultRandomEngine)];
             upperCaseUsed = true;
-        }else if(random == 2){
+        }else if(random == 2) {
             password += lowerCaseLetters[lowerCaseDist(defaultRandomEngine)];
-        }else if(random == 3){
+        }else if(random == 3) {
             password += specialCharacters[specialDist(defaultRandomEngine)];
             specialUsed = true;
         }
@@ -50,11 +49,11 @@ std::string password::generatePassword(int length, bool upperCase, bool specialS
 
     //Swapping to meet requirements
 
-    if(!specialUsed && (upperCaseUsed || !upperCase) && specialSymbols){
+    if(!specialUsed && (upperCaseUsed || !upperCase) && specialSymbols) {
          //if no special symbols but requested
         password += specialCharacters[specialDist(defaultRandomEngine)];
     }
-    else if((specialUsed || !specialSymbols) && !upperCaseUsed && upperCase){
+    else if((specialUsed || !specialSymbols) && !upperCaseUsed && upperCase) {
         //if no upperCase but requested
         password += upperCaseLetters[upperCaseDist(defaultRandomEngine)];
     }
@@ -70,10 +69,11 @@ std::string password::generatePassword(int length, bool upperCase, bool specialS
     return password;
 }
 
-std::string password::passwordSafety(const std::string &password){
+std::string password::passwordSafety(const std::string &password) {
     int upperCaseLetters=0, lowerCaseLetters=0, specialSymbols=0, score;
     auto itPassword = password.begin();
-    while(itPassword!= password.end()){
+
+    while(itPassword!= password.end()) {
         if(*itPassword >= 'a' && *itPassword <= 'z'){
             upperCaseLetters++;
         }else if(*itPassword >= 'A' && *itPassword <= 'Z'){
@@ -83,9 +83,9 @@ std::string password::passwordSafety(const std::string &password){
         }
         itPassword++;
     }
+
     score = (lowerCaseLetters + (upperCaseLetters*2) + (specialSymbols*4))*password.length();
-    std::cout << "score: " << score << std::endl;
-    //*determines password safety level
+    std::cout << "score: " << score << std::endl;                                                                       //determines password safety level
     if(score < 100) return "very weak";
     else if(score < 200) return "weak";
     else if(score < 300) return "mid";
