@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <Windows.h>
 #include "UI.hpp"
 #if _WIN64 || _WIN32
     #define OS "Windows"
@@ -8,6 +9,8 @@
 #endif
 
 auto main()->int {
+
+    //MSG msg;
     UI ui = UI();
 
     UI::clearTerminal();
@@ -20,6 +23,22 @@ auto main()->int {
         return -1;
     }
     UI::clearTerminal();
+
+    /* TODO: Think about creating hotkey in a separate thread
+    if(!(RegisterHotKey(nullptr, 1, MOD_CONTROL | MOD_SHIFT, VK_F1))) {
+        std::cout << "Failed to register hotkey!" <<std::endl;
+        return 1;
+    }
+    while(GetMessage(&msg, nullptr, 0, 0) != 0) {
+        if(msg.message == WM_HOTKEY){
+            if(msg.wParam == 1){
+                ui.dataPrint();
+                ui.menu();
+                UI::clearTerminal();
+            }
+        }
+    }
+     */
 
     while(ui.getCommand() != 8){
         ui.dataPrint();
@@ -48,5 +67,6 @@ auto main()->int {
         ui.writeToFile();
     }
 
+    UnregisterHotKey(NULL, 1);
     return 0;
 }

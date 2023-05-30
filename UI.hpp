@@ -21,7 +21,7 @@ class UI{
     int incorectPasswordCount = 0, hours, minutes, seconds;
     int command;
     bool incorectPassword = false;
-    std::string filePath, newMasterPassword, checkPhrase = "1701__CheckPasswordCheck__1701||", masterPassword;
+    std::string filePath, newMasterPassword, checkPhrase = "4,/kB8Cv9^ygQrED5G+37jD4)^m7@X:tV*||", masterPassword;
     std::vector<std::string> categoriesDefault = {"None", "Internet", "Banking"}, categories = categoriesDefault;
     std::vector<FileEntry> data;
     std::fstream file;

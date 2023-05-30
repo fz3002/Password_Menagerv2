@@ -15,11 +15,11 @@ bool UserInput::isPasswordUsed(const std::string& password, const std::vector<Fi
 }
 
 std::string UserInput::filePath(){
-    std::string filePath;
+    std::string filePath, userInput;
     struct stat sb{};
+
     if(OS == "Linux") std::filesystem::current_path(std::filesystem::current_path().parent_path().parent_path());
     char newOrExistingFile = 0;
-    std::string userInput;
     while (newOrExistingFile != '1' && newOrExistingFile != '2') {
         std::cin >> userInput;
         newOrExistingFile = userInput[0];

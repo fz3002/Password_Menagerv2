@@ -58,7 +58,7 @@ std::vector<std::string> UI::getTimeStamp(const int &hours, const int &minutes, 
 
 void UI::chooseFile() {
     if(OS == "Linux") {
-        std::filesystem::current_path(std::filesystem::current_path().parent_path().parent_path());                   //TODO: check file path on linux
+        std::filesystem::current_path(std::filesystem::current_path().parent_path().parent_path());
     }
     else {
         std::filesystem::current_path(std::filesystem::current_path().parent_path());
@@ -93,10 +93,13 @@ void UI::enterFile() {
             ws(std::cin);
             getline(std::cin, newMasterPassword);
             masterPassword = newMasterPassword;
-            std::cout << "Confirm Password ";
+            std::cout << "Confirm Password: ";
             ws(std::cin);
             getline(std::cin, newMasterPassword);
             passwordConfirmation = newMasterPassword;
+            if( passwordConfirmation != masterPassword ){
+                std::cout << "Passwords are not the same!!!\n";
+            }
         }while(passwordConfirmation != masterPassword);
 
         writeToFile();                                                                                                  //write checkPhrase and default categories into file in case of sudden termination
@@ -132,6 +135,10 @@ void UI::enterFile() {
             std::cout << "Enter password: ";
             ws(std::cin);
             getline(std::cin, masterPassword);
+
+            dataStringDec = EncryptDecrypt::decrypt(masterPassword, dataString);
+            phraseToCheck = dataStringDec.substr(0, dataStringDec.find("||", 0)+2);
+
             incorectPasswordCount++;
             if(incorectPasswordCount > 5){
                 std::cout << "Too many incorrect attempts!!!" << std::endl;
@@ -175,7 +182,7 @@ void UI::dataPrint() {
     int dataIndex = 0;
 
     for(const auto& e: data) {
-        std::cout << ++dataIndex << ". " << e << std::endl;
+        std::cout << ++dataIndex << ".\n" << e << std::endl;
     }
 
     std::cout<<"------------------------------------------------------------------------------------------------------------------------"<<std::endl;
@@ -206,6 +213,7 @@ void UI::addEntry() {
 
     clearTerminal();
 
+    std::cout << "--ADD ENTRY\n" << std::endl;
     while(commandLocal != 'n' && commandLocal!= 'N') {
         FileEntry fileEntry = UserInput::getFileEntry(data, categories);
         this -> data.push_back(fileEntry);
@@ -222,13 +230,14 @@ void UI::deleteEntry() {
     int rangeBegin, rangeEnd;
     std::string deleteEntriesConfirmation;
 
-    while(std::cout << "Enter range of entries to delete (2 Numbers): " && !(std::cin >> rangeBegin >> rangeEnd)) {
+    std::cout << "--DELETE ENTRY\n" << std::endl;
+    while((std::cout << "Enter range of entries to delete ([begin] [end]): " && !(std::cin >> rangeBegin >> rangeEnd)) || rangeBegin < 1 || rangeEnd > data.size()) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Invalid input!!!" << std::endl;
     }
 
-    while(std::cout << "Are u sure you want to delete entries from " << rangeBegin << " to "<< rangeEnd &&
+    while(std::cout << "Are u sure you want to delete entries from " << rangeBegin << " to "<< rangeEnd << std::endl &&
             !(std::cin >> deleteEntriesConfirmation) &&
             tolower(deleteEntriesConfirmation[0]) != 'y' &&
             tolower(deleteEntriesConfirmation[0]) != 'n'){
@@ -247,6 +256,7 @@ void UI::editEntry() {
     int index, categoryIndex, localCommand;
     std::string newName, newPassword, newService, newLogin;
 
+    std::cout << "--EDIT ENTRY\n" << std::endl;
     while (std::cout << "Enter index of entry to edit: " &&! (std::cin >> index)) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -314,6 +324,7 @@ void UI::editEntry() {
 void UI::searchEntry() {
     std::string searchPhrase;
 
+    std::cout << "--SEARCH ENTRY\n" << std::endl;
     std::cout << "Search phrase: ";
     ws(std::cin);
     getline(std::cin, searchPhrase);
@@ -323,6 +334,7 @@ void UI::searchEntry() {
     if(foundEntries.empty()){
          std::cout << "No entry found!" << std::endl;
     }else{
+        std::cout << "Found entries: " << std::endl;
         int index = 0;
         for(const auto& e: foundEntries) {
             std::cout << ++index << ". " << e << std::endl;
@@ -335,6 +347,7 @@ void UI::sortEntries(){
     std::vector<FileEntry> sortedEntries = data;
     int dataIndex = 0;
 
+    std::cout << "--SORT ENTRIES\n" << std::endl;
     while(stringToLowerCase(sortParameter) != "name" && stringToLowerCase(sortParameter) != "category") {
         std::cout << "Sorting parameter: (Name/Category) ";
         std::cin >> sortParameter;
@@ -352,14 +365,21 @@ void UI::sortEntries(){
     }
 }
 
-void UI::addCategory(){
+void UI::addCategory() {
     printCategories();
 
     std::string newCategory;
 
+    std::cout << "--ADD CATEGORY\n" << std::endl;
     std::cout << "Please enter category name: ";
     ws(std::cin);
     getline(std::cin, newCategory);
+    while (find(categories.begin(), categories.end(), newCategory) != categories.end()) {
+        std::cout << "Category already exists!!!" << std::endl;
+        std::cout << "Please enter category name: ";
+        ws(std::cin);
+        getline(std::cin, newCategory);
+    }
     categories.push_back(newCategory);
 }
 
@@ -368,16 +388,25 @@ void UI::deleteCategory() {
 
     std::string categoryName, deleteCategoryConfirmation;
 
+    std::cout << "--DELETE CATEGORY\n" << std::endl;
     std::cout << "Please enter category name: ";
     ws(std::cin);
     getline(std::cin, categoryName);
     while(find(categories.begin(), categories.end(), categoryName) == categories.end()) {
         std::cout << "Invalid input!!!" << std::endl;
+        std::cout << "Please enter category name: ";
         ws(std::cin);
         getline(std::cin, categoryName);
     }
 
-    while(std::cout << "Are u sure you want to delete category and all entries that belong to it? " << categoryName &&
+    while(categoryName == "None" || categoryName == "Internet" || categoryName == "Banking"){
+        std::cout << "Can't delete default 3 categories!!!" << std::endl;
+        std::cout << "Please enter category name: ";
+        ws(std::cin);
+        getline(std::cin, categoryName);
+    }
+
+    while(std::cout << "Are u sure you want to delete category and all entries that belong to it? Category Name:" << categoryName << std::endl &&
           !(std::cin >> deleteCategoryConfirmation) &&
           tolower(deleteCategoryConfirmation[0]) != 'y' &&
           tolower(deleteCategoryConfirmation[0]) != 'n'){
@@ -385,6 +414,7 @@ void UI::deleteCategory() {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Invalid input!!!" << std::endl;
     }
+
     if (tolower(deleteCategoryConfirmation[0]) != 'y') {
         categories.erase(std::remove(categories.begin(), categories.end(), categoryName), categories.end());
     }
@@ -396,19 +426,25 @@ void UI::deleteCategory() {
     }
 }
 
-void UI::writeToFile() { //TODO:Check why throws index out of range error
+void UI::writeToFile() {
     std::vector<std::string> timeStamp = getTimeStamp(hours, minutes, seconds);
     std::string hString = timeStamp[0], minString = timeStamp[1], secString = timeStamp[2];
     std::string toEncrypt = checkPhrase + Categories::vectorToString(categories);
-    std::string encrypted;
+    std::string encryptedFileReady, encrypted;
     auto fileRefresh = std::fstream(filePath, std::ios::out | std::ios::binary);
 
     for(auto e: data){
         toEncrypt += e.toStringToEncrypt();
     }
-    encrypted = hString + EncryptDecrypt::encrypt(masterPassword, toEncrypt).substr(0, checkPhrase.length()) + minString + encrypted.substr(checkPhrase.length(), encrypted.length()) + secString;
 
-    fileRefresh << encrypted;
+    encrypted = EncryptDecrypt::encrypt(masterPassword, toEncrypt);
+    encryptedFileReady = hString;
+    encryptedFileReady += encrypted.substr(0, checkPhrase.length());
+    encryptedFileReady += minString;
+    encryptedFileReady += encrypted.substr(checkPhrase.length());
+    encryptedFileReady += secString;
+
+    fileRefresh << encryptedFileReady;
 }
 
 int UI::getCommand() const {
