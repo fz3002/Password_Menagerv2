@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <Windows.h>
+#include <thread>
+#include <atomic>
 #include "UI.hpp"
 #if _WIN64 || _WIN32
     #define OS "Windows"
@@ -8,10 +10,38 @@
     #define __OS "Linux"
 #endif
 
+std::atomic<bool> running(true);
+UI ui;
+
+void hotKeyAction() { //TODO:implement hotkey
+    UI::clearTerminal();
+    ui.dataPrint();
+    ui.menu();
+}
+
+void hotKeyThread() {
+    if(!(RegisterHotKey(nullptr, 1, MOD_CONTROL | MOD_SHIFT, VK_F1))) {
+        std::cout << "Failed to register hotkey!" <<std::endl;
+        return ;
+    }
+    MSG msg;
+    while(running) {
+        if(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+            if(msg.message == WM_HOTKEY && msg.wParam == 1){
+                hotKeyAction();
+            }
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
+    UnregisterHotKey(nullptr, 1);
+}
+
+
 auto main()->int {
 
     //MSG msg;
-    UI ui = UI();
+    ui = UI();
 
     UI::clearTerminal();
 
@@ -23,22 +53,7 @@ auto main()->int {
         return -1;
     }
     UI::clearTerminal();
-
-    /* TODO: Think about creating hotkey in a separate thread
-    if(!(RegisterHotKey(nullptr, 1, MOD_CONTROL | MOD_SHIFT, VK_F1))) {
-        std::cout << "Failed to register hotkey!" <<std::endl;
-        return 1;
-    }
-    while(GetMessage(&msg, nullptr, 0, 0) != 0) {
-        if(msg.message == WM_HOTKEY){
-            if(msg.wParam == 1){
-                ui.dataPrint();
-                ui.menu();
-                UI::clearTerminal();
-            }
-        }
-    }
-     */
+    std::thread hotkeyThread(hotKeyThread);
 
     while(ui.getCommand() != 8){
         ui.dataPrint();
@@ -67,6 +82,8 @@ auto main()->int {
         ui.writeToFile();
     }
 
-    UnregisterHotKey(NULL, 1);
+    running = false;
+    hotkeyThread.join();
+
     return 0;
 }
