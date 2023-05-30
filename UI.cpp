@@ -209,9 +209,10 @@ void UI::addEntry() {
     while(commandLocal != 'n' && commandLocal!= 'N') {
         FileEntry fileEntry = UserInput::getFileEntry(data, categories);
         this -> data.push_back(fileEntry);
-        std::cout << "Do you want to add another entry? (Y/N): ";
+        std::cout << "Do you want to add another entry? [y/n]: ";
         std::cin >> commandLocalLine;
         commandLocal = commandLocalLine[0];
+        clearTerminal();
     }
 }
 
@@ -395,7 +396,7 @@ void UI::deleteCategory() {
     }
 }
 
-void UI::writeToFile() {
+void UI::writeToFile() { //TODO:Check why throws index out of range error
     std::vector<std::string> timeStamp = getTimeStamp(hours, minutes, seconds);
     std::string hString = timeStamp[0], minString = timeStamp[1], secString = timeStamp[2];
     std::string toEncrypt = checkPhrase + Categories::vectorToString(categories);

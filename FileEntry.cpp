@@ -52,7 +52,7 @@ std::string FileEntry::getDelimiter() {
 }
 
 std::ostream &operator<<(std::ostream &out, const FileEntry &fileEntry) {
-    return out << "name: " << fileEntry.name << "; login: " << fileEntry.login << "; password: " << fileEntry.password <<  "; category: " << fileEntry.category << "; service: " << fileEntry.service;
+    return out << "NAME: " << fileEntry.name << "; LOGIN: " << fileEntry.login << "; PASSWORD: " << fileEntry.password <<  "; CATEGORY: " << fileEntry.category << "; SERVICE: " << fileEntry.service;
 }
 
 bool operator==(const FileEntry &fileEntry1, const FileEntry &fileEntry2) {

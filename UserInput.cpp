@@ -108,7 +108,7 @@ std::string UserInput::filePath(){
 }
 
 FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::vector<std::string> &categories) {
-    char ifLogin, ifService;
+    std::string ifLogin, ifService;
     std::string name, entryPassword, service, login, commandLocalLine;
     int categoryIndex, commandLocalPassword;
 
@@ -122,7 +122,9 @@ FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::vecto
     if(commandLocalPassword == 1) { //Own Password
         char commandLocalOwnPassword = ' ';
         std::string commandLocalOwnPasswordInput;
+
         while(commandLocalOwnPassword != 'y' && commandLocalOwnPassword!= 'Y') {
+            commandLocalOwnPassword = ' ';
             std::cout << "Password: ";
             ws(std::cin);
             getline(std::cin, entryPassword);
@@ -140,21 +142,22 @@ FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::vecto
     }
     else if (commandLocalPassword == 2) { //Generate Password
         int gPasswordLength;
-        char choiceUpperCase = ' ', choiceSpecialSymbols =' ';
+        std::string choiceUpperCase = " ", choiceSpecialSymbols =" ";
         bool gUpperCase, gSpecialSymbols;
         std::cout << "Password length: ";
         std::cin >> gPasswordLength;
-        while(choiceUpperCase!= 'n' && choiceUpperCase!= 'N' && choiceUpperCase != 'y' && choiceUpperCase!= 'Y'){
+        while(choiceUpperCase[0] != 'n' && choiceUpperCase[0] != 'N' && choiceUpperCase[0] != 'y' && choiceUpperCase[0] != 'Y'){
             std::cout << "Would you like to use uppercase letters? [y/n]:";
             std::cin >> choiceUpperCase;
         }
-        while(choiceSpecialSymbols!= 'n' && choiceSpecialSymbols!= 'N' && choiceSpecialSymbols != 'y' && choiceSpecialSymbols!= 'Y'){
+        while(choiceSpecialSymbols[0] != 'n' && choiceSpecialSymbols[0] != 'N' && choiceSpecialSymbols[0] != 'y' && choiceSpecialSymbols[0] != 'Y'){
             std::cout << "Would you like to use special symbols? [y/n]:";
             std::cin >> choiceSpecialSymbols;
         }
-        gUpperCase = choiceUpperCase == 'y' || choiceUpperCase == 'Y';
-        gSpecialSymbols = choiceSpecialSymbols == 'y' || choiceSpecialSymbols == 'Y';
+        gUpperCase = choiceUpperCase[0] == 'y' || choiceUpperCase[0] == 'Y';
+        gSpecialSymbols = choiceSpecialSymbols[0] == 'y' || choiceSpecialSymbols[0] == 'Y';
         entryPassword = password::generatePassword(gPasswordLength, gUpperCase, gSpecialSymbols);
+
         std::cout << "Password generated: " << entryPassword << std::endl;
     }
     FileEntry fileEntry(name, entryPassword);
@@ -184,17 +187,17 @@ FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::vecto
             std::cout << "Invalid input!!!" << std::endl;
         }
     }
-    std::cout << "Do you want to add service? (Y/N): ";
+    std::cout << "Do you want to add service? [y/n]: ";
     std::cin >> ifService;
-    if(toupper(ifService) == 'Y'){
+    if(toupper(ifService[0]) == 'Y'){
         std::cout << "Service: ";
         ws(std::cin);
         getline(std::cin, service);
         fileEntry.setService(service);
     }
-    std::cout << "Do you want to add login? (Y/N): ";
+    std::cout << "Do you want to add login? [y/n]: ";
     std::cin >> ifLogin;
-    if(toupper(ifLogin) == 'Y'){
+    if(toupper(ifLogin[0]) == 'Y'){
         std::cout << "Login: ";
         ws(std::cin);
         getline(std::cin, login);
