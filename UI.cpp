@@ -84,7 +84,7 @@ void UI::enterFile() {
     if(!file.is_open()) {                                                                                               //if file does not exist create it and choose new master password
         file = std::fstream(filePath, std::ios::out);
         file.close();
-        std::string passwordConfirmation = "-";
+        std::string passwordConfirmation;
 
         std::cout << "New file created!" << std::endl;
 
@@ -105,7 +105,7 @@ void UI::enterFile() {
     }else{                                                                                                              //file exists
 
         std::string changedTimeStamp;
-        std::vector<std::string> timeStampFormated = getTimeStamp(hours, minutes, seconds);
+        std::vector<std::string> timeStampFormatted = getTimeStamp(hours, minutes, seconds);
 
         while(getline(file, line)) {
             dataString += line;
@@ -118,7 +118,7 @@ void UI::enterFile() {
         sbstring.pop_back();                                                                                            //deleting 2 last characters cause of Time stamp of seconds
         sbstring.pop_back();
         dataString = dataString.substr(2, checkPhrase.length()) + sbstring;
-        changedTimeStamp = timeStampFormated[0] + dataString.substr(0, checkPhrase.length()) + timeStampFormated[1] + sbstring + timeStampFormated[2];
+        changedTimeStamp = timeStampFormatted[0] + dataString.substr(0, checkPhrase.length()) + timeStampFormatted[1] + sbstring + timeStampFormatted[2];
         file << changedTimeStamp;
 
         std::cout << "Enter password: ";
@@ -237,27 +237,32 @@ void UI::addEntry() {
 
 void UI::deleteEntry() {
     dataPrint();
-
+    
     int rangeBegin, rangeEnd;
     std::string deleteEntriesConfirmation;
+    if (!data.empty()) {
+        std::cout << "--DELETE ENTRY\n" << std::endl;
+        while ((std::cout << "Enter range of entries to delete ([begin] [end]): " &&
+                !(std::cin >> rangeBegin >> rangeEnd)) || rangeBegin < 1 || rangeEnd > data.size()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input!!!" << std::endl;
+        }
 
-    std::cout << "--DELETE ENTRY\n" << std::endl;
-    while((std::cout << "Enter range of entries to delete ([begin] [end]): " && !(std::cin >> rangeBegin >> rangeEnd)) || rangeBegin < 1 || rangeEnd > data.size()) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Invalid input!!!" << std::endl;
-    }
-
-    while(std::cout << "Are u sure you want to delete entries from " << rangeBegin << " to "<< rangeEnd << std::endl &&
-            !(std::cin >> deleteEntriesConfirmation) &&
-            tolower(deleteEntriesConfirmation[0]) != 'y' &&
-            tolower(deleteEntriesConfirmation[0]) != 'n'){
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Invalid input!!!" << std::endl;
-    }
-    if (tolower(deleteEntriesConfirmation[0]) == 'y') {
-        this->data.erase(data.begin() + rangeBegin - 1, data.begin() + rangeEnd);
+        while (std::cout << "Are u sure you want to delete entries from " << rangeBegin << " to " << rangeEnd
+                         << std::endl &&
+               !(std::cin >> deleteEntriesConfirmation) &&
+               tolower(deleteEntriesConfirmation[0]) != 'y' &&
+               tolower(deleteEntriesConfirmation[0]) != 'n') {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input!!!" << std::endl;
+        }
+        if (tolower(deleteEntriesConfirmation[0]) == 'y') {
+            this->data.erase(data.begin() + rangeBegin - 1, data.begin() + rangeEnd);
+        }
+    }else{
+        std::cout << "Please enter some data first" <<std::endl;
     }
 }
 
@@ -266,93 +271,109 @@ void UI::editEntry() {
 
     int index, categoryIndex, localCommand;
     std::string newName, newPassword, newService, newLogin;
+    
+    if(!data.empty()) {
+        std::cout << "--EDIT ENTRY\n" << std::endl;
+        while (std::cout << "Enter index of entry to edit: " && !(std::cin >> index) || index < 1 ||
+               index > data.size()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input!!!" << std::endl;
+        }
 
-    std::cout << "--EDIT ENTRY\n" << std::endl;
-    while (std::cout << "Enter index of entry to edit: " && !(std::cin >> index) || index < 1 || index > data.size()) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Invalid input!!!" << std::endl;
-    }
+        FileEntry &fileEntry = this->data[index - 1];
 
-    FileEntry &fileEntry = this -> data[index - 1];
+        clearTerminal();
 
-    clearTerminal();
+        std::cout << fileEntry << std::endl;
+        std::cout << "Edit: "
+                     "[1]Name; "
+                     "[2]Login; "
+                     "[3]Password; "
+                     "[4]Category; "
+                     "[5]Service; "
+                     "[6]Cancel" << std::endl;
+        while (!(std::cin >> localCommand) || localCommand < 1 || localCommand > 6) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input!!!" << std::endl;
+        }
 
-    std::cout << fileEntry << std::endl;
-    std::cout << "Edit: "
-                 "[1]Name; "
-                 "[2]Login; "
-                 "[3]Password; "
-                 "[4]Category; "
-                 "[5]Service; "
-                 "[6]Cancel"<< std::endl;
-    while(!(std::cin >> localCommand) || localCommand < 1 || localCommand > 6){
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Invalid input!!!" << std::endl;
-    };
-
-    switch(localCommand) {
-        case 1: std::cout << "Edit Name to: ";
+        switch (localCommand) {
+            case 1:
+                std::cout << "Edit Name to: ";
                 UserInput::getUserInputString(newName);
                 fileEntry.setName(newName);
                 break;
-        case 2: std::cout << "Edit Login to: ";
+            case 2:
+                std::cout << "Edit Login to: ";
                 UserInput::getUserInputString(newLogin);
                 fileEntry.setLogin(newLogin);
                 break;
-        case 3: std::cout << "Edit Password to: ";
+            case 3:
+                std::cout << "Edit Password to: ";
                 UserInput::getUserInputString(newPassword);
                 fileEntry.setPassword(newPassword);
                 break;
-        case 4: std::cout << "Edit Category to one listed below: ";
-                for(const auto& e: categories) {
-                std::cout << "[" <<find(categories.begin(), categories.end(), e) - categories.begin() + 1 << "] " << e << " ";
+            case 4:
+                std::cout << "Edit Category to one listed below: ";
+                for (const auto &e: categories) {
+                    std::cout << "[" << find(categories.begin(), categories.end(), e) - categories.begin() + 1 << "] "
+                              << e << " ";
                 }
-                std::cout << "[" <<categories.size() + 1 << "] Create new category"<< std::endl;
-                while(true){
-                    while(!(std::cin >> categoryIndex)){
+                std::cout << "[" << categories.size() + 1 << "] Create new category" << std::endl;
+                while (true) {
+                    while (!(std::cin >> categoryIndex)) {
                         std::cin.clear();
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                         std::cout << "Invalid input!!!" << std::endl;
-                    };
-                    if(categoryIndex > 0 && categoryIndex <= categories.size()){
-                        fileEntry.setCategory(categories[categoryIndex-1]);
+                    }
+                    if (categoryIndex > 0 && categoryIndex <= categories.size()) {
+                        fileEntry.setCategory(categories[categoryIndex - 1]);
                         break;
-                    }else if(categoryIndex == categories.size() + 1){
+                    } else if (categoryIndex == categories.size() + 1) {
                         addCategory();
                         fileEntry.setCategory(categories[categories.size() - 1]);
                         break;
-                    }else{
+                    } else {
                         std::cout << "Invalid input!!!" << std::endl;
                     }
                 }
                 break;
-        case 5: std::cout << "Edit Service to: ";
+            case 5:
+                std::cout << "Edit Service to: ";
                 UserInput::getUserInputString(newService);
                 fileEntry.setService(newService);
                 break;
-        default: break;
+            default:
+                break;
+        }
+    }else{
+        std::cout << "Please enter some data first!!! " << std::endl;
     }
 }
 
 void UI::searchEntry() {
     std::string searchPhrase;
+    
+    if(!data.empty()) {
+        std::cout << "--SEARCH ENTRY\n" << std::endl;
+        std::cout << "Search phrase: ";
+        UserInput::getUserInputString(searchPhrase);
 
-    std::cout << "--SEARCH ENTRY\n" << std::endl;
-    std::cout << "Search phrase: ";
-    UserInput::getUserInputString(searchPhrase);
+        std::vector<FileEntry> foundEntries = FileEntry::searchFileEntries(data, searchPhrase);
 
-    std::vector<FileEntry> foundEntries = FileEntry::searchFileEntries(data, searchPhrase);
-
-    if(foundEntries.empty()){
-         std::cout << "No entry found!" << std::endl;
-    }else{
-        std::cout << "Found entries: " << std::endl;
-        int index = 0;
-        for(const auto& e: foundEntries) {
-            std::cout << ++index << ". " << e << std::endl;
+        if (foundEntries.empty()) {
+            std::cout << "No entry found!" << std::endl;
+        } else {
+            std::cout << "Found entries: " << std::endl;
+            int index = 0;
+            for (const auto &e: foundEntries) {
+                std::cout << ++index << ". " << e << std::endl;
+            }
         }
+    }else{
+        std::cout << "Please enter some data" << std::endl;
     }
 }
 
@@ -360,22 +381,26 @@ void UI::sortEntries(){
     std::string sortParameter;
     std::vector<FileEntry> sortedEntries = data;
     int dataIndex = 0;
+    
+    if(!data.empty()) {
+        std::cout << "--SORT ENTRIES\n" << std::endl;
+        while (stringToLowerCase(sortParameter) != "name" && stringToLowerCase(sortParameter) != "category") {
+            std::cout << "Sorting parameter: (Name/Category) ";
+            UserInput::getUserInputString(sortParameter);
+        }
 
-    std::cout << "--SORT ENTRIES\n" << std::endl;
-    while(stringToLowerCase(sortParameter) != "name" && stringToLowerCase(sortParameter) != "category") {
-        std::cout << "Sorting parameter: (Name/Category) ";
-        UserInput::getUserInputString(sortParameter);
-    }
+        if (stringToLowerCase(sortParameter) == "name") {
+            std::sort(sortedEntries.begin(), sortedEntries.end(), LessThanName());
+        } else {
+            std::sort(sortedEntries.begin(), sortedEntries.end(), LessThanCategory());
+        }
 
-    if(stringToLowerCase(sortParameter) == "name") {
-        std::sort(sortedEntries.begin(), sortedEntries.end(), LessThanName());
+        std::cout << "Sorted entries: " << std::endl;
+        for (const auto &e: sortedEntries) {
+            std::cout << ++dataIndex << ". " << e << std::endl;
+        }
     }else{
-        std::sort(sortedEntries.begin(), sortedEntries.end(), LessThanCategory());
-    }
-
-    std::cout << "Sorted entries: " << std::endl;
-    for(const auto& e: sortedEntries){
-        std::cout << ++dataIndex << ". " << e << std::endl;
+        std::cout << "Please enter some data" << std::endl;
     }
 }
 
