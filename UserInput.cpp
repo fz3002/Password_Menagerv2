@@ -99,7 +99,7 @@ FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::vecto
 
     std::cout << "Enter Data" << std::endl;
     std::cout << "Name: ";
-    getUserInputString(name);
+    getUserInputString(name); //TODO: Try to implement esc to leave function
     std::cout << "[1]Use your own password; "
                  "[2]Generate password;"
                  "[3]Cancel " << std::endl;
