@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <filesystem>
 #include <sys/stat.h>
+#include <windows.h>
+#include <conio.h>
 #include "FileEntry.hpp"
 #include "Password.hpp"
 
@@ -41,7 +43,7 @@ namespace UserInput{
      */
     void getUserInputString(std::string &arg);
 
-    void checkFileExist(std::string &filePath, struct stat &sb);
+    void checkFileExist(std::string &filePath);
 }
 
 #endif

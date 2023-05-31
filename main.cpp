@@ -12,6 +12,11 @@
 
 
 auto main()->int {
+    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD mode;
+    GetConsoleMode(hStdin, &mode);
+    SetConsoleMode(hStdin, mode & (~ENABLE_ECHO_INPUT));
+
     UI ui = UI();
 
     UI::clearTerminal();
@@ -52,5 +57,6 @@ auto main()->int {
         ui.writeToFile();
     }
 
+    SetConsoleMode(hStdin, mode);
     return 0;
 }
