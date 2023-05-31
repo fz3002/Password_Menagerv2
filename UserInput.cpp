@@ -205,3 +205,8 @@ FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::vecto
     }
     return fileEntry;
 }
+
+std::string UserInput::getUserInputString(std::string &arg) {
+    ws(std::cin);
+    getline(std::cin, arg);
+}

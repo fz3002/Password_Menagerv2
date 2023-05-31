@@ -35,6 +35,8 @@ namespace UserInput{
      * @return FileEntry
      */
     FileEntry getFileEntry(const std::vector<FileEntry> &data, std::vector<std::string> &categories);
+
+    std::string getUserInputString(std::string &arg);
 }
 
 #endif

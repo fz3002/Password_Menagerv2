@@ -90,12 +90,10 @@ void UI::enterFile() {
 
         do {
             std::cout << "Please enter password: ";
-            ws(std::cin);
-            getline(std::cin, newMasterPassword);
+            UserInput::getUserInputString(newMasterPassword);
             masterPassword = newMasterPassword;
             std::cout << "Confirm Password: ";
-            ws(std::cin);
-            getline(std::cin, newMasterPassword);
+            UserInput::getUserInputString(newMasterPassword);
             passwordConfirmation = newMasterPassword;
             if( passwordConfirmation != masterPassword ){
                 std::cout << "Passwords are not the same!!!\n";
@@ -124,8 +122,7 @@ void UI::enterFile() {
         file << changedTimeStamp;
 
         std::cout << "Enter password: ";
-        ws(std::cin);
-        getline(std::cin, masterPassword);
+        UserInput::getUserInputString(masterPassword);
 
         dataStringDec = EncryptDecrypt::decrypt(masterPassword, dataString);
 
@@ -133,8 +130,7 @@ void UI::enterFile() {
         while(phraseToCheck != checkPhrase) {
             std::cout << "Invalid password" << std::endl;
             std::cout << "Enter password: ";
-            ws(std::cin);
-            getline(std::cin, masterPassword);
+            UserInput::getUserInputString(masterPassword);
 
             dataStringDec = EncryptDecrypt::decrypt(masterPassword, dataString);
             phraseToCheck = dataStringDec.substr(0, dataStringDec.find("||", 0)+2);
@@ -209,13 +205,22 @@ void UI::menu() {
 
 void UI::addEntry() {
     char commandLocal = ' ';
-    std::string commandLocalLine;
+    std::string commandLocalLine, confirmation = " ";
 
     clearTerminal();
 
     std::cout << "--ADD ENTRY\n" << std::endl;
     while(commandLocal != 'n' && commandLocal!= 'N') {
         FileEntry fileEntry = UserInput::getFileEntry(data, categories);
+        std::cout << fileEntry;
+        while(confirmation[0] != 'n' && confirmation[0] != 'N' && confirmation[0] != 'y' && confirmation[0] != 'Y'){
+            std::cout << "Are you sure you want to add this entry? [y/n]: ";
+            std::cin >> commandLocalLine;
+        }
+        if (confirmation[0] != 'n' && confirmation[0] != 'N'){                                                          //break if user doesn't want to add entry
+            clearTerminal();
+            break;
+        }
         this -> data.push_back(fileEntry);
         std::cout << "Do you want to add another entry? [y/n]: ";
         std::cin >> commandLocalLine;
@@ -278,18 +283,15 @@ void UI::editEntry() {
 
     switch(localCommand) {
         case 1: std::cout << "Edit Name to: ";
-                ws(std::cin);
-                getline(std::cin, newName);
+                UserInput::getUserInputString(newName);
                 fileEntry.setName(newName);
                 break;
         case 2: std::cout << "Edit Login to: ";
-                ws(std::cin);
-                getline(std::cin, newLogin);
+                UserInput::getUserInputString(newLogin);
                 fileEntry.setLogin(newLogin);
                 break;
         case 3: std::cout << "Edit Password to: ";
-                ws(std::cin);
-                getline(std::cin, newPassword);
+                UserInput::getUserInputString(newPassword);
                 fileEntry.setPassword(newPassword);
                 break;
         case 4: std::cout << "Edit Category to one listed below: ";
@@ -312,8 +314,7 @@ void UI::editEntry() {
                 }
                 break;
         case 5: std::cout << "Edit Service to: ";
-                ws(std::cin);
-                getline(std::cin, newService);
+                UserInput::getUserInputString(newService);
                 fileEntry.setService(newService);
                 break;
         default: std::cout << "Invalid input!!!";
@@ -326,8 +327,7 @@ void UI::searchEntry() {
 
     std::cout << "--SEARCH ENTRY\n" << std::endl;
     std::cout << "Search phrase: ";
-    ws(std::cin);
-    getline(std::cin, searchPhrase);
+    UserInput::getUserInputString(searchPhrase)
 
     std::vector<FileEntry> foundEntries = FileEntry::searchFileEntries(data, searchPhrase);
 
@@ -350,7 +350,7 @@ void UI::sortEntries(){
     std::cout << "--SORT ENTRIES\n" << std::endl;
     while(stringToLowerCase(sortParameter) != "name" && stringToLowerCase(sortParameter) != "category") {
         std::cout << "Sorting parameter: (Name/Category) ";
-        std::cin >> sortParameter;
+        UserInput::getUserInputString(sortParameter);
     }
 
     if(stringToLowerCase(sortParameter) == "name") {
@@ -372,13 +372,11 @@ void UI::addCategory() {
 
     std::cout << "--ADD CATEGORY\n" << std::endl;
     std::cout << "Please enter category name: ";
-    ws(std::cin);
-    getline(std::cin, newCategory);
+    UserInput::getUserInputString(newCategory);
     while (find(categories.begin(), categories.end(), newCategory) != categories.end()) {
         std::cout << "Category already exists!!!" << std::endl;
         std::cout << "Please enter category name: ";
-        ws(std::cin);
-        getline(std::cin, newCategory);
+        UserInput::getUserInputString(newCategory);
     }
     categories.push_back(newCategory);
 }
@@ -390,20 +388,17 @@ void UI::deleteCategory() {
 
     std::cout << "--DELETE CATEGORY\n" << std::endl;
     std::cout << "Please enter category name: ";
-    ws(std::cin);
-    getline(std::cin, categoryName);
+    UserInput::getUserInputString(categoryName);
     while(find(categories.begin(), categories.end(), categoryName) == categories.end()) {
         std::cout << "Invalid input!!!" << std::endl;
         std::cout << "Please enter category name: ";
-        ws(std::cin);
-        getline(std::cin, categoryName);
+        UserInput::getUserInputString(categoryName);
     }
 
     while(categoryName == "None" || categoryName == "Internet" || categoryName == "Banking"){
         std::cout << "Can't delete default 3 categories!!!" << std::endl;
         std::cout << "Please enter category name: ";
-        ws(std::cin);
-        getline(std::cin, categoryName);
+        UserInput::getUserInputString(categoryName);
     }
 
     while(std::cout << "Are u sure you want to delete category and all entries that belong to it? Category Name:" << categoryName << std::endl &&
