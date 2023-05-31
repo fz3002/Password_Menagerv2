@@ -42,8 +42,11 @@ namespace UserInput{
      * @param arg
      */
     void getUserInputString(std::string &arg);
-
-    void checkFileExist(std::string &filePath);
+    /**
+     * @brief checks if filePath is correct
+     * @param filePath
+     */
+    void correctFilePath(std::string &filePath);
 }
 
 #endif

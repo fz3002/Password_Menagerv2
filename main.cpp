@@ -1,8 +1,5 @@
 #include <iostream>
-#include <string>
 #include <Windows.h>
-#include <thread>
-#include <atomic>
 #include "UI.hpp"
 #if _WIN64 || _WIN32
     #define OS "Windows"

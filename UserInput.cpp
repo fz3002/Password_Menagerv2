@@ -26,7 +26,7 @@ std::string UserInput::filePath(){
         if(newOrExistingFile == 1){                                                                                     //creating new file
             std::cout << "Please enter absolute path to the file: " << std::endl;
             getUserInputString(filePath);
-            checkFileExist(filePath);
+            correctFilePath(filePath);
         }else if(newOrExistingFile == 2) {                                                                              //choose file from data directory
             char newFileCreation;
             std::string userInputNewFile;
@@ -47,7 +47,7 @@ std::string UserInput::filePath(){
                     std::cout << "No files in directory!" << std::endl;
                     std::cout << "Please enter absolute path to the file: " << std::endl;
                     getUserInputString(filePath);
-                    checkFileExist(filePath);
+                    correctFilePath(filePath);
                 } else {
                     while (std::cout << "Choose file number from the ones listed above: " && !(std::cin >> chooseDir) ||
                            chooseDir < 1 || chooseDir > index) {                                                        //choose from given files TODO:check input error catch
@@ -78,7 +78,7 @@ std::string UserInput::filePath(){
                         if (newFileCreation == 'y' || newFileCreation == 'Y') {                                                            //if user wants to create new file he has to enter the absolute path to the file if not loops goes to the beginning of the loop of choosing existing files
                             std::cout << "Please enter absolute path to the file: " << std::endl;
                             getUserInputString(filePath);
-                            checkFileExist(filePath);
+                            correctFilePath(filePath);
                             break;
                         }
                     } else break;                                                                                       //if file exists and is not a directory loop ends
@@ -213,7 +213,7 @@ void UserInput::getUserInputString(std::string &arg) {
     getline(std::cin, arg);
 }
 
-void UserInput::checkFileExist(std::string &filePath) {
+void UserInput::correctFilePath(std::string &filePath) {
     while(!std::filesystem::exists(std::filesystem::path(filePath).parent_path())){
         std::cout << "Path doesn't exists, Enter new one: " <<std::endl;
         getUserInputString(filePath);
