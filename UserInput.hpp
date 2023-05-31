@@ -34,9 +34,14 @@ namespace UserInput{
      * @param categories
      * @return FileEntry
      */
-    FileEntry getFileEntry(const std::vector<FileEntry> &data, std::vector<std::string> &categories);
+    FileEntry getFileEntry(const std::vector<FileEntry> &data, std::vector<std::string> &categories, bool &cancel);
+    /**
+     * @brief gets input string from user
+     * @param arg
+     */
+    void getUserInputString(std::string &arg);
 
-    std::string getUserInputString(std::string &arg);
+    void checkFileExist(std::string &filePath, struct stat &sb);
 }
 
 #endif

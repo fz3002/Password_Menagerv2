@@ -42,33 +42,6 @@ std::string password::generatePassword(int length, bool upperCase, bool specialS
             password += digits[digitsDist(rng)];
         }
     }
-    /*
-    //choosing random index that is lowerCase
-
-    int randomIndex = randomIndexDist(defaultRandomEngine)%password.size();
-    while(password[randomIndex] > 'z' || password[randomIndex] < 'a') {
-        randomIndex = randomIndexDist(defaultRandomEngine)%password.size();
-    }
-
-    //Swapping to meet requirements
-
-    if(!specialUsed && (upperCaseUsed || !upperCase) && specialSymbols) {
-         //if no special symbols but requested
-        password += specialCharacters[specialDist(defaultRandomEngine)];
-    }
-    else if((specialUsed || !specialSymbols) && !upperCaseUsed && upperCase) {
-        //if no upperCase but requested
-        password += upperCaseLetters[upperCaseDist(defaultRandomEngine)];
-    }
-    else if(!specialUsed && !upperCaseUsed && specialSymbols && upperCase) { //neither symbol present both requested
-        int randomIndex2 = randomIndexDist(defaultRandomEngine)%password.size();
-        while (randomIndex2 ==  randomIndex){
-            randomIndex2 = randomIndexDist(defaultRandomEngine)%password.size();
-        }
-        password[randomIndex] = specialCharacters[specialDist(defaultRandomEngine)];
-        password[randomIndex2] = upperCaseLetters[upperCaseDist(defaultRandomEngine)];
-    }
-     */
 
     return password;
 }
