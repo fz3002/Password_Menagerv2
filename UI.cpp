@@ -209,23 +209,30 @@ void UI::addEntry() {
 
     clearTerminal();
 
-    std::cout << "--ADD ENTRY\n" << std::endl;
     while(commandLocal != 'n' && commandLocal!= 'N') {
-        FileEntry fileEntry = UserInput::getFileEntry(data, categories);
-        std::cout << fileEntry;
-        while(confirmation[0] != 'n' && confirmation[0] != 'N' && confirmation[0] != 'y' && confirmation[0] != 'Y'){
-            std::cout << "Are you sure you want to add this entry? [y/n]: ";
-            std::cin >> commandLocalLine;
-        }
-        if (confirmation[0] != 'n' && confirmation[0] != 'N'){                                                          //break if user doesn't want to add entry
+        std::cout << "--ADD ENTRY\n" << std::endl;
+        bool cancel = false;
+        FileEntry fileEntry = UserInput::getFileEntry(data, categories, cancel);
+        if (!cancel) {
+            std::cout << fileEntry;
+            while (confirmation[0] != 'n' && confirmation[0] != 'N' && confirmation[0] != 'y' &&
+                   confirmation[0] != 'Y') {
+                std::cout << "Are you sure you want to add this entry? [y/n]: ";
+                UserInput::getUserInputString(confirmation);
+            }
+            if (confirmation[0] != 'n' && confirmation[0] !=
+                                          'N') {                                                          //break if user doesn't want to add entry
+                clearTerminal();
+                break;
+            }
+            this->data.push_back(fileEntry);
+            while (commandLocal != 'n' && commandLocal != 'N' && commandLocal != 'y' && commandLocal != 'Y') {
+                std::cout << "Do you want to add another entry? [y/n]: ";
+                UserInput::getUserInputString(commandLocalLine);
+                commandLocal = commandLocalLine[0];
+            }
             clearTerminal();
-            break;
         }
-        this -> data.push_back(fileEntry);
-        std::cout << "Do you want to add another entry? [y/n]: ";
-        std::cin >> commandLocalLine;
-        commandLocal = commandLocalLine[0];
-        clearTerminal();
     }
 }
 
@@ -262,7 +269,7 @@ void UI::editEntry() {
     std::string newName, newPassword, newService, newLogin;
 
     std::cout << "--EDIT ENTRY\n" << std::endl;
-    while (std::cout << "Enter index of entry to edit: " &&! (std::cin >> index)) {
+    while (std::cout << "Enter index of entry to edit: " && !(std::cin >> index) || index < 1 || index > data.size()) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Invalid input!!!" << std::endl;
@@ -278,8 +285,13 @@ void UI::editEntry() {
                  "[2]Login; "
                  "[3]Password; "
                  "[4]Category; "
-                 "[5]Service; " << std::endl;
-    std::cin >> localCommand;
+                 "[5]Service; "
+                 "[6]Cancel"<< std::endl;
+    while(!(std::cin >> localCommand) || localCommand < 1 || localCommand > 6){
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Invalid input!!!" << std::endl;
+    };
 
     switch(localCommand) {
         case 1: std::cout << "Edit Name to: ";
@@ -300,7 +312,11 @@ void UI::editEntry() {
                 }
                 std::cout << "[" <<categories.size() + 1 << "] Create new category"<< std::endl;
                 while(true){
-                    std::cin >> categoryIndex;
+                    while(!(std::cin >> categoryIndex)){
+                        std::cin.clear();
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                        std::cout << "Invalid input!!!" << std::endl;
+                    };
                     if(categoryIndex > 0 && categoryIndex <= categories.size()){
                         fileEntry.setCategory(categories[categoryIndex-1]);
                         break;
@@ -317,8 +333,7 @@ void UI::editEntry() {
                 UserInput::getUserInputString(newService);
                 fileEntry.setService(newService);
                 break;
-        default: std::cout << "Invalid input!!!";
-                break;
+        default: break;
     }
 }
 
@@ -327,7 +342,7 @@ void UI::searchEntry() {
 
     std::cout << "--SEARCH ENTRY\n" << std::endl;
     std::cout << "Search phrase: ";
-    UserInput::getUserInputString(searchPhrase)
+    UserInput::getUserInputString(searchPhrase);
 
     std::vector<FileEntry> foundEntries = FileEntry::searchFileEntries(data, searchPhrase);
 
