@@ -218,21 +218,6 @@ void UserInput::correctFilePath(std::string &filePath) {
         std::cout << "Path doesn't exists, Enter new one: " <<std::endl;
         getUserInputString(filePath);
     }
-    /*
-    size_t pos = filePath.find_last_of("\\/");
-    std::string fileDir =  (std::string::npos == pos)
-                           ? ""
-                           : filePath.substr(0, pos);
-
-    while(stat(fileDir.c_str(), &sb) != 0) {                                                                //checking if file exists
-        std::cout << "Incorrect Path, Enter new one: " <<std::endl;
-        getUserInputString(filePath);
-        pos = filePath.find_last_of("\\/");
-        fileDir =  (std::string::npos == pos)
-                   ? ""
-                   : filePath.substr(0, pos);
-    }
-     */
 }
 
 

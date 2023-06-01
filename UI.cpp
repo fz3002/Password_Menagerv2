@@ -227,8 +227,6 @@ void UI::addEntry() {
     char commandLocal = ' ';
     std::string commandLocalLine, confirmation = " ";
 
-    clearTerminal();
-
     while(commandLocal != 'n' && commandLocal!= 'N') {
         std::cout << "--ADD ENTRY\n" << std::endl;
         bool cancel = false;
@@ -240,7 +238,7 @@ void UI::addEntry() {
                 std::cout << "Are you sure you want to add this entry? [y/n]: ";
                 UserInput::getUserInputString(confirmation);
             }
-            if (confirmation[0] != 'n' && confirmation[0] != 'N') {                                                          //break if user doesn't want to add entry
+            if (confirmation[0] == 'n' || confirmation[0] == 'N') {                                                          //break if user doesn't want to add entry
                 clearTerminal();
                 break;
             }
@@ -250,7 +248,6 @@ void UI::addEntry() {
                 UserInput::getUserInputString(commandLocalLine);
                 commandLocal = commandLocalLine[0];
             }
-            clearTerminal();
         }
     }
 }
@@ -434,7 +431,6 @@ void UI::addCategory() {
     UserInput::getUserInputString(newCategory);
     categories.insert(newCategory);
 
-    clearTerminal();
 }
 
 void UI::deleteCategory() {
@@ -475,7 +471,7 @@ void UI::deleteCategory() {
             data.erase(std::remove(data.begin(), data.end(), e), data.end());
         }
     }
-}
+   }
 
 void UI::writeToFile() {
     std::vector<std::string> timeStamp = getTimeStamp(hours, minutes, seconds);

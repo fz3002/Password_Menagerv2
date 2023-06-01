@@ -65,6 +65,7 @@ auto main()->int {
         }
 
         ui.writeToFile();
+        UI::clearTerminal();
     }
 
     return 0;
