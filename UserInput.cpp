@@ -91,14 +91,14 @@ std::string UserInput::filePath(){
     return filePath;
 }
 
-FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::vector<std::string> &categories, bool &cancel) {
+FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::set<std::string> &categories, bool &cancel) {
     std::string ifLogin, ifService;
     std::string name, entryPassword, service, login, commandLocalLine;
-    int categoryIndex, commandLocalPassword;
+    int chosenCategory, commandLocalPassword, categoryIndex = 0;
 
     std::cout << "Enter Data" << std::endl;
     std::cout << "Name: ";
-    getUserInputString(name); //TODO: Try to implement esc to leave function
+    getUserInputString(name);
     if(name[0] == 27) std::cout << "Test" << std::endl;
     std::cout << "[1]Use your own password; "
                  "[2]Generate password;"
@@ -157,29 +157,29 @@ FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::vecto
     if(!cancel) {
         std::cout << "Category: ";
         for (const auto &e: categories) {
-            std::cout << "[" << find(categories.begin(), categories.end(), e) - categories.begin() + 1 << "] " << e
+            std::cout << "[" << ++categoryIndex << "] " << e
                       << " ";
         }
         std::cout << "[" << categories.size() + 1 << "] Create new category" << std::endl;
         std::string newCategory;
         while (true) {
-            while (!(std::cin >> categoryIndex)) {
+            while (!(std::cin >> chosenCategory)) {
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 std::cout << "Invalid input!" << std::endl;
             }
-            if (categoryIndex > 0 && categoryIndex <= categories.size()) {
-                fileEntry.setCategory(categories[categoryIndex - 1]);
+            if (chosenCategory > 0 && chosenCategory <= categories.size()) {
+                fileEntry.setCategory(*next(categories.begin(), chosenCategory-1));
                 break;
-            } else if (categoryIndex == categories.size() + 1) {
+            } else if (chosenCategory == categories.size() + 1) {
                 int index = 0;
                 for (const auto &e: categories) {
                     std::cout << ++index << ". " << e << std::endl;
                 }
                 std::cout << "Please enter category name: ";
                 getUserInputString(newCategory);
-                categories.push_back(newCategory);
-                fileEntry.setCategory(categories[categories.size() - 1]);
+                categories.insert(newCategory);
+                fileEntry.setCategory(*categories.rbegin());
                 break;
             } else {
                 std::cout << "Invalid input!!!" << std::endl;
@@ -234,3 +234,5 @@ void UserInput::correctFilePath(std::string &filePath) {
     }
      */
 }
+
+

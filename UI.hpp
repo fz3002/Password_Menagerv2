@@ -10,6 +10,8 @@
 #include <filesystem>
 #include <sys/stat.h>
 #include <ctime>
+#include <unordered_set>
+#include <csignal>
 #include "EncryptDecrypt.hpp"
 #include "Password.hpp"
 #include "FileEntry.hpp"
@@ -17,12 +19,13 @@
 #include "UserInput.hpp"
 
 class UI{
+
     private:
     int incorectPasswordCount = 0, hours, minutes, seconds;
     int command;
     bool incorectPassword = false;
     std::string filePath, newMasterPassword, checkPhrase = "4,/kB8Cv9^ygQrED5G+37jD4)^m7@X:tV*||", masterPassword;
-    std::vector<std::string> categoriesDefault = {"None", "Internet", "Banking"}, categories = categoriesDefault;
+    std::set<std::string> categoriesDefault = {"None", "Internet", "Banking"}, categories = categoriesDefault;
     std::vector<FileEntry> data;
     std::fstream file;
 
@@ -47,6 +50,7 @@ class UI{
      * @return std::vector<std::string> 
      */
     static std::vector<std::string> getTimeStamp(const int &hours, const int &minutes, const int &seconds);
+
     public:
     /**
      * @brief UI element prompting user to choose a file
@@ -121,8 +125,13 @@ class UI{
      * @return false 
      */
     bool getIncorrectPassword() const;
-
+    /**
+     * @brief clearing terminal
+     */
     static void clearTerminal();
+
+    static bool confirmation(const std::string &functionName);
+
 };
 
 #endif

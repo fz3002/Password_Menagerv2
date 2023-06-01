@@ -11,6 +11,8 @@
 #include <sys/stat.h>
 #include <windows.h>
 #include <conio.h>
+#include <set>
+#include <csignal>
 #include "FileEntry.hpp"
 #include "Password.hpp"
 
@@ -36,10 +38,11 @@ namespace UserInput{
      * @param categories
      * @return FileEntry
      */
-    FileEntry getFileEntry(const std::vector<FileEntry> &data, std::vector<std::string> &categories, bool &cancel);
+    FileEntry getFileEntry(const std::vector<FileEntry> &data, std::set<std::string> &categories, bool &cancel);
     /**
      * @brief gets input string from user
      * @param arg
+     * @return FileEntry
      */
     void getUserInputString(std::string &arg);
     /**
@@ -47,6 +50,7 @@ namespace UserInput{
      * @param filePath
      */
     void correctFilePath(std::string &filePath);
+
 }
 
 #endif

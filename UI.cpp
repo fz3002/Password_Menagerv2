@@ -55,6 +55,26 @@ std::vector<std::string> UI::getTimeStamp(const int &hours, const int &minutes, 
     return timeStamp;
 }
 
+int UI::getCommand() const {
+    return this->command;
+}
+
+bool UI::getIncorrectPassword() const {
+    return this -> incorectPassword;
+}
+
+void UI::clearTerminal() {
+    if(OS == "Windows") {
+        system("cls");
+    }else {
+        system("clear");
+    }
+
+}
+
+
+//------------------------------------------------------MAIN FUNCTIONS
+
 
 void UI::chooseFile() {
     if(OS == "Linux") {
@@ -146,7 +166,7 @@ void UI::enterFile() {
         if(!incorectPassword) {
             std::string categoriesFileString = dataStringDec.substr(phraseToCheck.length(), dataStringDec.find("||", phraseToCheck.length()) - phraseToCheck.length() + 2);
             std::string fileEntriesData = dataStringDec.substr(categoriesFileString.length() + phraseToCheck.length(), dataStringDec.length());
-            categories = Categories::stringToVector(categoriesFileString);
+            categories = Categories::stringToSet(categoriesFileString);
 
             if(fileEntriesData.length() > 0){
                 std::vector<std::string> fileEntriesStrings = EncryptDecrypt::split(fileEntriesData, "||");
@@ -269,10 +289,12 @@ void UI::deleteEntry() {
 void UI::editEntry() {
     dataPrint();
 
-    int index, categoryIndex, localCommand;
+    int index, chosenCategory, localCommand;
     std::string newName, newPassword, newService, newLogin;
     
     if(!data.empty()) {
+        int indexCategory = 0;
+
         std::cout << "--EDIT ENTRY\n" << std::endl;
         while (std::cout << "Enter index of entry to edit: " && !(std::cin >> index) || index < 1 ||
                index > data.size()) {
@@ -298,7 +320,6 @@ void UI::editEntry() {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Invalid input!!!" << std::endl;
         }
-
         switch (localCommand) {
             case 1:
                 std::cout << "Edit Name to: ";
@@ -318,22 +339,22 @@ void UI::editEntry() {
             case 4:
                 std::cout << "Edit Category to one listed below: ";
                 for (const auto &e: categories) {
-                    std::cout << "[" << find(categories.begin(), categories.end(), e) - categories.begin() + 1 << "] "
+                    std::cout << "[" << ++indexCategory << "] "
                               << e << " ";
                 }
                 std::cout << "[" << categories.size() + 1 << "] Create new category" << std::endl;
                 while (true) {
-                    while (!(std::cin >> categoryIndex)) {
+                    while (!(std::cin >> chosenCategory)) {
                         std::cin.clear();
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                         std::cout << "Invalid input!!!" << std::endl;
                     }
-                    if (categoryIndex > 0 && categoryIndex <= categories.size()) {
-                        fileEntry.setCategory(categories[categoryIndex - 1]);
+                    if (chosenCategory > 0 && chosenCategory <= categories.size()) {
+                        fileEntry.setCategory(*next(categories.begin(), chosenCategory - 1));
                         break;
-                    } else if (categoryIndex == categories.size() + 1) {
+                    } else if (chosenCategory == categories.size() + 1) {
                         addCategory();
-                        fileEntry.setCategory(categories[categories.size() - 1]);
+                        fileEntry.setCategory(*categories.rbegin());
                         break;
                     } else {
                         std::cout << "Invalid input!!!" << std::endl;
@@ -355,7 +376,7 @@ void UI::editEntry() {
 
 void UI::searchEntry() {
     std::string searchPhrase;
-    
+
     if(!data.empty()) {
         std::cout << "--SEARCH ENTRY\n" << std::endl;
         std::cout << "Search phrase: ";
@@ -405,19 +426,15 @@ void UI::sortEntries(){
 }
 
 void UI::addCategory() {
-    printCategories();
-
     std::string newCategory;
 
     std::cout << "--ADD CATEGORY\n" << std::endl;
+    printCategories();
     std::cout << "Please enter category name: ";
     UserInput::getUserInputString(newCategory);
-    while (find(categories.begin(), categories.end(), newCategory) != categories.end()) {
-        std::cout << "Category already exists!!!" << std::endl;
-        std::cout << "Please enter category name: ";
-        UserInput::getUserInputString(newCategory);
-    }
-    categories.push_back(newCategory);
+    categories.insert(newCategory);
+
+    clearTerminal();
 }
 
 void UI::deleteCategory() {
@@ -450,7 +467,7 @@ void UI::deleteCategory() {
     }
 
     if (tolower(deleteCategoryConfirmation[0]) != 'y') {
-        categories.erase(std::remove(categories.begin(), categories.end(), categoryName), categories.end());
+        categories.erase(categoryName);
     }
 
     for(auto e: data) {
@@ -481,21 +498,19 @@ void UI::writeToFile() {
     fileRefresh << encryptedFileReady;
 }
 
-int UI::getCommand() const {
-    return this->command;
-}
+bool UI::confirmation(const std::string &functionName) {
+    std::string confirmationInput;
 
-bool UI::getIncorrectPassword() const {
-    return this -> incorectPassword;
-}
-
-void UI::clearTerminal() {
-    if(OS == "Windows") {
-        system("cls");
-    }else {
-        system("clear");
+    std::cout << functionName << "\nContinue? [y/n]: ";
+    UserInput::getUserInputString(confirmationInput);
+    while (tolower(confirmationInput[0]) != 'y' && tolower(confirmationInput[0]) != 'n'){
+        std::cout << "Invalid Input" << std::endl;
+        std::cout << "Continue? [y/n]: ";
+        UserInput::getUserInputString(confirmationInput);
     }
 
-}
+    clearTerminal();
 
+    return tolower(confirmationInput[0]) == 'y';
+}
 

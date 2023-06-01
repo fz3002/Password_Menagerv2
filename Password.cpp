@@ -20,13 +20,13 @@ std::string password::generatePassword(int length, bool upperCase, bool specialS
                                         digitsDist (0,digits.length());
 
     for(int i = 0; i < length; i++) {//randomize upperCase lowerCase or Special
-        int random;
+        unsigned int random;
 
         if (upperCase && !specialSymbols) {
             random = intUpperDisto(rng);
         }else if (!upperCase && specialSymbols) {
             random = intSpecialDisto(rng);
-        }else if (!upperCase && !specialSymbols) {
+        }else if (!upperCase) {
             random = 2;
         }else{
             random = intDisto(rng);

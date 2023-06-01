@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <set>
 
 namespace Categories{
     /**
@@ -11,14 +12,15 @@ namespace Categories{
      * @param categories 
      * @return std::string 
      */
-    std::string vectorToString(const std::vector<std::string>& categories);
+    std::string vectorToString(const std::set<std::string>& categories);
     /**
      * @brief returns vector of cateogires from decrypted string
      * 
      * @param categories 
-     * @return std::vector<std::string> 
+     * @return std::set<std::string>
      */
-    std::vector<std::string> stringToVector(std::string categories);
+    std::set<std::string> stringToSet(std::string categories);
+
 }
 
 #endif

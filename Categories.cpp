@@ -1,8 +1,10 @@
+#include <unordered_set>
+#include <set>
 #include "EncryptDecrypt.hpp"
 #include "Categories.hpp"
 #include "FileEntry.hpp"
 
-std::string Categories::vectorToString(const std::vector<std::string>& categories) {
+std::string Categories::vectorToString(const std::set<std::string>& categories) {
     std::string result;
 
     for(const auto& e: categories){
@@ -13,9 +15,15 @@ std::string Categories::vectorToString(const std::vector<std::string>& categorie
     return result + "||";
 }
 
-std::vector<std::string> Categories::stringToVector(std::string categories) {
+std::set<std::string> Categories::stringToSet(std::string categories) {
     categories.pop_back();
     categories.pop_back();
+    std::set<std::string> setSol;
 
-    return EncryptDecrypt::split(categories, FileEntry::getDelimiter());
+    std::vector<std::string> categoriesVec =  EncryptDecrypt::split(categories, FileEntry::getDelimiter());
+    for(const auto& el : categoriesVec){
+        setSol.insert(el);
+    }
+
+    return setSol;
 }
