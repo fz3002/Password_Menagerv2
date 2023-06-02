@@ -22,7 +22,7 @@ auto main()->int {
     }
     UI::clearTerminal();
 
-    while(ui.getCommand() != 8){
+    while(ui.getCommand() != 9){
         ui.dataPrint();
         ui.menu();
         UI::clearTerminal();
@@ -60,7 +60,15 @@ auto main()->int {
                         ui.deleteCategory();
                     }
                     break;
-            case 8: break;
+            case 8: if (UI::confirmation("--CHANGE FILE")) {
+                        ui.changeFile();
+                        if (ui.getIncorrectPassword()) {
+                            return -1;
+                        }
+                        UI::clearTerminal();
+                    }
+                    break;
+            case 9 : break;
             default: std::cout << "Invalid command!" << std::endl;
         }
 

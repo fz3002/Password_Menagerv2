@@ -101,7 +101,7 @@ FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::set<s
     getUserInputString(name);
     if(name[0] == 27) std::cout << "Test" << std::endl;
     std::cout << "[1]Use your own password; "
-                 "[2]Generate password;"
+                 "[2]Generate password; "
                  "[3]Cancel " << std::endl;
     while( !(std::cin >> commandLocalPassword) || commandLocalPassword < 1){
         std::cin.clear();
@@ -169,7 +169,7 @@ FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::set<s
                 std::cout << "Invalid input!" << std::endl;
             }
             if (chosenCategory > 0 && chosenCategory <= categories.size()) {
-                fileEntry.setCategory(*next(categories.begin(), chosenCategory-1));
+                fileEntry.setCategory(*next(categories.begin(), chosenCategory - 1));
                 break;
             } else if (chosenCategory == categories.size() + 1) {
                 int index = 0;

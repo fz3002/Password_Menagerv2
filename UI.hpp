@@ -21,9 +21,9 @@
 class UI{
 
     private:
-    int incorectPasswordCount = 0, hours, minutes, seconds;
+    int incorrectPasswordCount = 0, hours, minutes, seconds;
     int command;
-    bool incorectPassword = false;
+    bool incorrectPassword = false;
     std::string filePath, newMasterPassword, checkPhrase = "4,/kB8Cv9^ygQrED5G+37jD4)^m7@X:tV*||", masterPassword;
     std::set<std::string> categoriesDefault = {"None", "Internet", "Banking"}, categories = categoriesDefault;
     std::vector<FileEntry> data;
@@ -108,6 +108,10 @@ class UI{
      */
     void deleteCategory();
     /**
+     * @brief changing file used by the program
+     */
+    void changeFile();
+    /**
      * @brief function writes formated data to file
      * 
      */
@@ -129,7 +133,11 @@ class UI{
      * @brief clearing terminal
      */
     static void clearTerminal();
-
+    /**
+     * @brief gets confirmation of entering menu function
+     * @param functionName
+     * @return
+     */
     static bool confirmation(const std::string &functionName);
 
 };

@@ -60,7 +60,7 @@ int UI::getCommand() const {
 }
 
 bool UI::getIncorrectPassword() const {
-    return this -> incorectPassword;
+    return this -> incorrectPassword;
 }
 
 void UI::clearTerminal() {
@@ -155,15 +155,15 @@ void UI::enterFile() {
             dataStringDec = EncryptDecrypt::decrypt(masterPassword, dataString);
             phraseToCheck = dataStringDec.substr(0, dataStringDec.find("||", 0)+2);
 
-            incorectPasswordCount++;
-            if(incorectPasswordCount > 5){
+            incorrectPasswordCount++;
+            if(incorrectPasswordCount > 5){
                 std::cout << "Too many incorrect attempts!!!" << std::endl;
-                incorectPassword = true;
+                incorrectPassword = true;
                 break;
             }
         }
 
-        if(!incorectPassword) {
+        if(!incorrectPassword) {
             std::string categoriesFileString = dataStringDec.substr(phraseToCheck.length(), dataStringDec.find("||", phraseToCheck.length()) - phraseToCheck.length() + 2);
             std::string fileEntriesData = dataStringDec.substr(categoriesFileString.length() + phraseToCheck.length(), dataStringDec.length());
             categories = Categories::stringToSet(categoriesFileString);
@@ -213,10 +213,11 @@ void UI::menu() {
                  "[5] - Sort passwords;\n "
                  "[6] - Add category;\n "
                  "[7] - Delete category;\n "
-                 "[8] - Quit"
+                 "[8] - Change File;\n "
+                 "[9] - Quit"
               << std::endl;
 
-    while(!(std::cin >> command) || command < 1 || command > 8) {                                                       //ask until not an int or not int <1 and >8
+    while(!(std::cin >> command) || command < 1 || command > 9) {                                                       //ask until not an int or not int <1 and >8
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Invalid command!" << std::endl;
@@ -231,6 +232,7 @@ void UI::addEntry() {
         std::cout << "--ADD ENTRY\n" << std::endl;
         bool cancel = false;
         FileEntry fileEntry = UserInput::getFileEntry(data, categories, cancel);
+        clearTerminal();
         if (!cancel) {
             std::cout << fileEntry;
             while (confirmation[0] != 'n' && confirmation[0] != 'N' && confirmation[0] != 'y' &&
@@ -312,7 +314,7 @@ void UI::editEntry() {
                      "[4]Category; "
                      "[5]Service; "
                      "[6]Cancel" << std::endl;
-        while (!(std::cin >> localCommand) || localCommand < 1 || localCommand > 6) {
+        while (!(std::cin >> localCommand) || localCommand < 1 || localCommand > 9) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Invalid input!!!" << std::endl;
@@ -473,6 +475,29 @@ void UI::deleteCategory() {
     }
    }
 
+void UI::changeFile() {
+    std::string currentSave;
+
+    std::cout << "Do you want to save current file? [y/n]:";
+    UserInput::getUserInputString(currentSave);
+    while(tolower(currentSave[0]) != 'y' && tolower(currentSave[0]) != 'n'){
+        std::cout << "Invalid Input!!!" << std::endl;
+        UserInput::getUserInputString(currentSave);
+    }
+    if(tolower(currentSave[0]) == 'y'){
+        writeToFile();
+    }
+    data.clear();
+    masterPassword = "";
+    categories = categoriesDefault;
+    incorrectPasswordCount = 0;
+    UI::clearTerminal();
+    std::cout << "Would you like to [1] create a new file/use file outside directory or [2] open an existing file?" << std::endl;
+    filePath = UserInput::filePath();
+    UI::clearTerminal();
+    enterFile();
+}
+
 void UI::writeToFile() {
     std::vector<std::string> timeStamp = getTimeStamp(hours, minutes, seconds);
     std::string hString = timeStamp[0], minString = timeStamp[1], secString = timeStamp[2];
@@ -509,4 +534,5 @@ bool UI::confirmation(const std::string &functionName) {
 
     return tolower(confirmationInput[0]) == 'y';
 }
+
 
