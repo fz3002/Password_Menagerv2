@@ -269,7 +269,7 @@ void UI::deleteEntry() {
         }
 
         while (std::cout << "Are u sure you want to delete entries from " << rangeBegin << " to " << rangeEnd
-                         << std::endl &&
+                         << "[y/n]" << std::endl &&
                !(std::cin >> deleteEntriesConfirmation) &&
                tolower(deleteEntriesConfirmation[0]) != 'y' &&
                tolower(deleteEntriesConfirmation[0]) != 'n') {
