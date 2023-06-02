@@ -12,6 +12,7 @@
 #include <ctime>
 #include <unordered_set>
 #include <csignal>
+#include <set>
 #include "EncryptDecrypt.hpp"
 #include "Password.hpp"
 #include "FileEntry.hpp"

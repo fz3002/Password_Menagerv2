@@ -177,10 +177,10 @@ void UI::enterFile() {
                     readFileEntry.setCategory(fileEntryMembers[2]);
 
                     if(fileEntryMembers[3].length() > 0){
-                        readFileEntry.setLogin(fileEntryMembers[3]);
+                        readFileEntry.setLogin(fileEntryMembers[4]);
                     }
                     if(fileEntryMembers[4].length() > 0){
-                        readFileEntry.setService(fileEntryMembers[4]);
+                        readFileEntry.setService(fileEntryMembers[3]);
                     }
 
                     data.push_back(readFileEntry);
@@ -192,7 +192,7 @@ void UI::enterFile() {
 }
 
 void UI::dataPrint() {
-    std::cout<<"------------------------------------------------------------------------------------------------------------------------"<<std::endl;
+    std::cout<<"------------------------------------------------------------------------------------------------------------------------\n";
     std::cout << "Data: " << std::endl;
 
     int dataIndex = 0;
@@ -201,7 +201,7 @@ void UI::dataPrint() {
         std::cout << ++dataIndex << ".\n" << e << std::endl;
     }
 
-    std::cout<<"------------------------------------------------------------------------------------------------------------------------"<<std::endl;
+    std::cout<<"------------------------------------------------------------------------------------------------------------------------\n";
 }
 
 void UI::menu() {
@@ -225,10 +225,13 @@ void UI::menu() {
 }
 
 void UI::addEntry() {
-    char commandLocal = ' ';
-    std::string commandLocalLine, confirmation = " ";
+    char commandLocal;
+    std::string commandLocalLine, confirmation;
 
     while(commandLocal != 'n' && commandLocal!= 'N') {
+        commandLocal = ' ';
+        confirmation = " ";
+        clearTerminal();
         std::cout << "--ADD ENTRY\n" << std::endl;
         bool cancel = false;
         FileEntry fileEntry = UserInput::getFileEntry(data, categories, cancel);
@@ -375,6 +378,7 @@ void UI::editEntry() {
 
 void UI::searchEntry() {
     std::string searchPhrase;
+    std::string goNext;
 
     if(!data.empty()) {
         std::cout << "--SEARCH ENTRY\n" << std::endl;
@@ -395,11 +399,14 @@ void UI::searchEntry() {
     }else{
         std::cout << "Please enter some data" << std::endl;
     }
+    std::cout << "Write something to continue: ";
+    UserInput::getUserInputString(goNext);
 }
 
 void UI::sortEntries(){
     std::string sortParameter;
     std::vector<FileEntry> sortedEntries = data;
+    std::string goNext;
     int dataIndex = 0;
     
     if(!data.empty()) {
@@ -422,6 +429,8 @@ void UI::sortEntries(){
     }else{
         std::cout << "Please enter some data" << std::endl;
     }
+    std::cout << "Write something to continue: ";
+    UserInput::getUserInputString(goNext);
 }
 
 void UI::addCategory() {
@@ -432,7 +441,6 @@ void UI::addCategory() {
     std::cout << "Please enter category name: ";
     UserInput::getUserInputString(newCategory);
     categories.insert(newCategory);
-
 }
 
 void UI::deleteCategory() {
@@ -443,8 +451,9 @@ void UI::deleteCategory() {
     std::cout << "--DELETE CATEGORY\n" << std::endl;
     std::cout << "Please enter category name: ";
     UserInput::getUserInputString(categoryName);
-    while(find(categories.begin(), categories.end(), categoryName) == categories.end()) {
-        std::cout << "Invalid input!!!" << std::endl;
+
+    while(!categories.contains(categoryName)) {
+        std::cout << "Invalid input!!! - There is no such category" << std::endl;
         std::cout << "Please enter category name: ";
         UserInput::getUserInputString(categoryName);
     }
@@ -464,7 +473,7 @@ void UI::deleteCategory() {
         std::cout << "Invalid input!!!" << std::endl;
     }
 
-    if (tolower(deleteCategoryConfirmation[0]) != 'y') {
+    if (tolower(deleteCategoryConfirmation[0]) == 'y') {
         categories.erase(categoryName);
     }
 

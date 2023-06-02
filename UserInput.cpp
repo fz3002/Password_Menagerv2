@@ -34,15 +34,13 @@ std::string UserInput::filePath(){
             while(true) {
                 int index = 0;
                 std::cout
-                        << "------------------------------------------------------------------------------------------------------------------------"
-                        << std::endl;
+                        << "------------------------------------------------------------------------------------------------------------------------\n";
                 for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(
                         std::filesystem::canonical("data"))) { // print out files in data directory
                     std::cout << ++index << ". " << std::filesystem::canonical(dirEntry.path()) << std::endl;
                 }
                 std::cout
-                        << "------------------------------------------------------------------------------------------------------------------------"
-                        << std::endl;
+                        << "------------------------------------------------------------------------------------------------------------------------\n";
                 if (index == 0) {                                                                                       //there are no file in data directory
                     std::cout << "No files in directory!" << std::endl;
                     std::cout << "Please enter absolute path to the file: " << std::endl;
@@ -185,8 +183,8 @@ FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::set<s
                 std::cout << "Invalid input!!!" << std::endl;
             }
         }
-        std::cout << "Do you want to add service? [y/n]: ";
         do {
+            std::cout << "Do you want to add service? [y/n]: ";
             getUserInputString(ifService);
         } while (toupper(ifService[0]) != 'Y' && toupper(ifService[0]) != 'N');
 
@@ -195,8 +193,8 @@ FileEntry UserInput::getFileEntry(const std::vector<FileEntry> &data, std::set<s
             getUserInputString(service);
             fileEntry.setService(service);
         }
-        std::cout << "Do you want to add login? [y/n]: ";
         do {
+            std::cout << "Do you want to add login? [y/n]: ";
             getUserInputString(ifLogin);
         } while (toupper(ifLogin[0]) != 'Y' && toupper(ifLogin[0]) != 'N');
         if (toupper(ifLogin[0]) == 'Y') {
@@ -214,7 +212,7 @@ void UserInput::getUserInputString(std::string &arg) {
 }
 
 void UserInput::correctFilePath(std::string &filePath) {
-    while(!std::filesystem::exists(std::filesystem::path(filePath).parent_path())){
+    while(!std::filesystem::exists(std::filesystem::path(filePath).parent_path()) ||  std::filesystem::is_directory(std::filesystem::path(filePath))){
         std::cout << "Path doesn't exists, Enter new one: " <<std::endl;
         getUserInputString(filePath);
     }
